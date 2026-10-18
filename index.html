@@ -1,1025 +1,939 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Hyper Local Agricultural Advisory</title>
+  <title>Hyper Local Agricultural Advisory</title>
 
-    <meta name="description"
-          content="Hyper Local Agricultural Advisory System with live weather, crop suitability and farming guidance.">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    <link rel="stylesheet" href="style.css">
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5fff7;
+      color: #222;
+      min-height: 100vh;
+    }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    header {
+      background: #176b3a;
+      color: white;
+      padding: 22px 7%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
-          rel="stylesheet">
+    header h1 {
+      font-size: 25px;
+    }
+
+    header p {
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    nav {
+      background: white;
+      padding: 14px 7%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    nav a {
+      color: #176b3a;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .hero {
+      padding: 55px 7%;
+      background: linear-gradient(120deg, #e0f8e7, #f7fff8);
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 34px;
+      color: #176b3a;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: auto;
+      line-height: 1.7;
+    }
+
+    .container {
+      width: 86%;
+      max-width: 1200px;
+      margin: 35px auto;
+    }
+
+    .section-title {
+      color: #176b3a;
+      margin-bottom: 20px;
+      font-size: 25px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #dceade;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 5px 18px #164d2510;
+    }
+
+    .card h3 {
+      color: #176b3a;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      line-height: 1.6;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 7px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd8cd;
+      border-radius: 8px;
+      background: white;
+      color: #222;
+      font-size: 15px;
+    }
+
+    button {
+      border: none;
+      background: #198754;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-top: 12px;
+    }
+
+    button:hover {
+      background: #125d36;
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      background: #edfaef;
+      border-radius: 8px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #555;
+      margin-top: 8px;
+    }
+
+    footer {
+      background: #143e27;
+      color: white;
+      text-align: center;
+      padding: 25px;
+      margin-top: 50px;
+      line-height: 1.8;
+    }
+
+    /* Chatbot styles */
+    #chatBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #198754;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      z-index: 9999;
+      box-shadow: 0 5px 18px #0002;
+    }
+
+    #chatBox {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      right: 20px;
+      bottom: 82px;
+      width: min(350px, calc(100vw - 30px));
+      height: 440px;
+      max-height: calc(100vh - 110px);
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 14px;
+      overflow: hidden;
+      z-index: 9999;
+      box-shadow: 0 5px 25px #0003;
+    }
+
+    #chatHead {
+      background: #176b3a;
+      color: white;
+      padding: 15px;
+      font-weight: bold;
+    }
+
+    #chatClose {
+      float: right;
+      cursor: pointer;
+    }
+
+    #chatMessages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      color: #222;
+      font-size: 14px;
+    }
+
+    .msg {
+      padding: 10px;
+      margin: 7px 0;
+      border-radius: 10px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .bot {
+      background: #eeeeee;
+      color: #222;
+    }
+
+    .user {
+      background: #d8f5df;
+      color: #222;
+      text-align: right;
+    }
+
+    #chatForm {
+      display: flex;
+      gap: 5px;
+      padding: 8px;
+      border-top: 1px solid #ddd;
+    }
+
+    #chatForm input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    #chatForm button {
+      margin-top: 0;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 21px;
+      }
+
+      .hero h2 {
+        font-size: 27px;
+      }
+
+      .container {
+        width: 92%;
+      }
+
+      nav {
+        gap: 13px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+  <header>
+    <div>
+      <h1>🌱 AgriGuide</h1>
+      <p>Hyper Local Agricultural Advisory System</p>
+    </div>
+    <div>Smart Farming • Better Decisions</div>
+  </header>
 
-<header class="header">
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#location">Location</a>
+    <a href="#weather">Weather</a>
+    <a href="#crops">Crop Advisory</a>
+    <a href="#risk">Crop Risk</a>
+    <a href="#chatbot">Chatbot</a>
+  </nav>
 
-    <div class="container nav-container">
+  <section class="hero" id="home">
+    <h2>Smart Farming Starts Here 🌾</h2>
+    <p>
+      Get location-based weather information, crop guidance,
+      growing recommendations and basic farming support
+      in one place.
+    </p>
+  </section>
 
-        <a href="#home" class="logo">
-            <span class="logo-icon">🌱</span>
-            <span>
-                <strong>Agri</strong>Guide
-            </span>
-        </a>
+  <main>
 
-        <nav class="navigation" id="navigation">
+    <section class="container" id="location">
+      <h2 class="section-title">📍 Your Farm Location</h2>
 
-            <a href="#home">Home</a>
-            <a href="#weather">Weather</a>
-            <a href="#advisory">Advisory</a>
-            <a href="#crop-info">Crop Info</a>
+      <div class="card">
+        <p>Allow location access to retrieve your coordinates and place name.</p>
 
-        </nav>
+        <button id="locationBtn" type="button">
+          Detect My Location
+        </button>
 
-        <div class="header-actions">
+        <p class="status" id="locationStatus">
+          Location has not been detected yet.
+        </p>
 
-            <button
-                class="theme-button"
-                id="themeButton"
-                onclick="toggleTheme()"
-                title="Toggle theme">
-                🌙
-            </button>
+        <div id="locationResult" class="result hidden"></div>
+      </div>
+    </section>
 
-            <button
-                class="menu-button"
-                id="menuButton"
-                aria-label="Open menu">
-                ☰
-            </button>
+    <section class="container" id="weather">
+      <h2 class="section-title">🌦️ Live Weather & Forecast</h2>
 
+      <div class="card">
+        <p>Enter a place name or detect your current location first.</p>
+
+        <label for="placeInput">City / Village Name</label>
+        <input
+          id="placeInput"
+          type="text"
+          placeholder="Example: Lucknow"
+        >
+
+        <button id="weatherBtn" type="button">
+          Get Weather
+        </button>
+
+        <div id="weatherResult" class="result hidden"></div>
+      </div>
+    </section>
+
+    <section class="container" id="crops">
+      <h2 class="section-title">🌾 Crop Advisory</h2>
+
+      <div class="grid">
+
+        <div class="card">
+          <h3>Crop Information</h3>
+
+          <label for="cropSelect">Select Crop</label>
+          <select id="cropSelect">
+            <option value="wheat">Wheat (गेहूं)</option>
+            <option value="rice">Rice (धान)</option>
+            <option value="maize">Maize (मक्का)</option>
+            <option value="mustard">Mustard (सरसों)</option>
+            <option value="potato">Potato (आलू)</option>
+            <option value="tomato">Tomato (टमाटर)</option>
+            <option value="chickpea">Chickpea (चना)</option>
+            <option value="sugarcane">Sugarcane (गन्ना)</option>
+          </select>
+
+          <button id="cropInfoBtn" type="button">
+            View Crop Details
+          </button>
+
+          <div id="cropInfo" class="result hidden"></div>
         </div>
 
-    </div>
+        <div class="card">
+          <h3>Crop Suitability</h3>
 
-</header>
+          <p>
+            This basic guide compares the selected crop's
+            preferred temperature with current weather when available.
+          </p>
 
+          <button id="suitabilityBtn" type="button">
+            Check Suitability
+          </button>
 
-<!-- ================= HERO ================= -->
+          <div id="suitabilityResult" class="result hidden"></div>
+        </div>
 
-<main>
+        <div class="card">
+          <h3>Best Crop Guidance</h3>
 
-<section class="hero animate-section" id="home">
+          <p>
+            Choose a crop and review its season and growing requirements.
+            Final selection also depends on soil, water and local conditions.
+          </p>
 
-    <div class="container hero-grid">
+          <button id="recommendBtn" type="button">
+            Get Crop Guidance
+          </button>
 
-        <div class="hero-content">
+          <div id="recommendResult" class="result hidden"></div>
+        </div>
 
-            <div class="badge">
-                🌾 Smart Farming • Local Weather • Crop Advisory
-            </div>
+      </div>
+    </section>
 
-            <h1>
-                Your
-                <span>Hyper Local</span>
-                Agricultural Advisor
-            </h1>
+    <section class="container" id="risk">
+      <h2 class="section-title">🛡️ Agricultural Risk Advisory</h2>
 
+      <div class="grid">
+
+        <div class="card">
+          <h3>Weather Risk</h3>
+          <p>Review temperature and rainfall conditions before farm activities.</p>
+
+          <button id="riskBtn" type="button">
+            Check Weather Risk
+          </button>
+
+          <div id="riskResult" class="result hidden"></div>
+        </div>
+
+        <div class="card">
+          <h3>Farming Tasks</h3>
+          <p>General checklist for planning crop activities.</p>
+
+          <ul style="padding-left:20px;line-height:2">
+            <li>Check soil moisture.</li>
+            <li>Monitor crop leaves for pests.</li>
+            <li>Review rainfall forecast.</li>
+            <li>Follow soil-test-based fertilizer advice.</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="container" id="chatbot">
+      <h2 class="section-title">🤖 AgriGuide Farming Chatbot</h2>
+
+      <div class="card">
+        <p>
+          Click the green Ask AgriGuide button in the bottom-right corner
+          to ask basic questions about crops, irrigation and farming.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <h3>🌱 AgriGuide</h3>
+    <p>Hyper Local Agricultural Advisory System</p>
+    <p>Weather data provided by Open-Meteo when available.</p>
+    <p>Use local agricultural experts for important crop treatment decisions.</p>
+  </footer>
+
+  <script>
+    const cropData = {
+      wheat: {
+        name: "Wheat (गेहूं)",
+        season: "Rabi",
+        temp: "About 10–25°C during different growth stages",
+        soil: "Well-drained loamy soil",
+        water: "Irrigation depends on soil moisture and growth stage",
+        duration: "Usually around 110–150 days, depending on variety"
+      },
+
+      rice: {
+        name: "Rice (धान)",
+        season: "Usually Kharif in many Indian regions",
+        temp: "Warm conditions, commonly around 20–35°C",
+        soil: "Soils that can retain sufficient moisture",
+        water: "High water requirement for many varieties",
+        duration: "Often around 100–150 days, depending on variety"
+      },
+
+      maize: {
+        name: "Maize (मक्का)",
+        season: "Kharif, Rabi or other seasons depending on region",
+        temp: "Warm growing conditions",
+        soil: "Well-drained fertile soil",
+        water: "Water is important during flowering and grain filling",
+        duration: "Often around 80–120 days"
+      },
+
+      mustard: {
+        name: "Mustard (सरसों)",
+        season: "Rabi",
+        temp: "Cool conditions are generally suitable",
+        soil: "Well-drained loamy soil",
+        water: "Avoid waterlogging; irrigation depends on the stage",
+        duration: "Often around 100–150 days"
+      },
+
+      potato: {
+        name: "Potato (आलू)",
+        season: "Usually a cool-season crop in many regions",
+        temp: "Cool conditions are preferred",
+        soil: "Loose, well-drained soil",
+        water: "Maintain appropriate moisture and avoid waterlogging",
+        duration: "Often around 80–120 days"
+      },
+
+      tomato: {
+        name: "Tomato (टमाटर)",
+        season: "Depends on local climate and variety",
+        temp: "Moderate temperatures are generally preferred",
+        soil: "Well-drained fertile soil",
+        water: "Regular moisture without waterlogging",
+        duration: "Harvest timing varies by variety and planting method"
+      },
+
+      chickpea: {
+        name: "Chickpea (चना)",
+        season: "Rabi",
+        temp: "Cool, relatively dry growing conditions",
+        soil: "Well-drained loamy soil",
+        water: "Avoid excess irrigation and waterlogging",
+        duration: "Often around 90–120 days"
+      },
+
+      sugarcane: {
+        name: "Sugarcane (गन्ना)",
+        season: "Planting season varies by Indian region",
+        temp: "Warm conditions and a long growing season",
+        soil: "Deep, fertile, well-drained soil",
+        water: "Requires adequate water over a long period",
+        duration: "Usually around 10–18 months, depending on region and variety"
+      }
+    };
+
+    let farmLatitude = null;
+    let farmLongitude = null;
+    let farmPlace = "";
+    let currentWeather = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    function showResult(id, content) {
+      const element = $(id);
+      element.textContent = "";
+      element.innerHTML = content;
+      element.classList.remove("hidden");
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    async function reverseGeocode(lat, lon) {
+      const url =
+        "https://geocoding-api.open-meteo.com/v1/reverse" +
+        `?latitude=${lat}&longitude=${lon}&language=en&format=json`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) return "";
+
+        const data = await response.json();
+        const place = data.results?.[0];
+
+        if (!place) return "";
+
+        return [
+          place.name,
+          place.admin2,
+          place.admin1,
+          place.country
+        ].filter((value, index, array) =>
+          value && array.indexOf(value) === index
+        ).join(", ");
+      } catch {
+        return "";
+      }
+    }
+
+    $("locationBtn").addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        $("locationStatus").textContent =
+          "Your browser does not support location access.";
+        return;
+      }
+
+      $("locationStatus").textContent =
+        "Requesting location permission...";
+
+      navigator.geolocation.getCurrentPosition(
+        async position => {
+          farmLatitude = position.coords.latitude;
+          farmLongitude = position.coords.longitude;
+
+          $("locationStatus").textContent =
+            "Coordinates found. Retrieving place name...";
+
+          farmPlace = await reverseGeocode(
+            farmLatitude,
+            farmLongitude
+          );
+
+          $("locationResult").innerHTML = `
+            <strong>Place:</strong>
+            ${escapeHTML(farmPlace || "Place name unavailable")}<br>
+            <strong>Latitude:</strong> ${farmLatitude.toFixed(5)}<br>
+            <strong>Longitude:</strong> ${farmLongitude.toFixed(5)}
+          `;
+
+          $("locationResult").classList.remove("hidden");
+          $("locationStatus").textContent = "Location detected.";
+
+          if (farmPlace) {
+            $("placeInput").value = farmPlace;
+          }
+
+          getWeatherByCoordinates(
+            farmLatitude,
+            farmLongitude
+          );
+        },
+
+        error => {
+          $("locationStatus").textContent =
+            error.code === 1
+              ? "Location permission denied. Allow location access in your browser."
+              : "Could not detect location. Enter your place name instead.";
+        },
+
+        {
+          enableHighAccuracy: false,
+          timeout: 12000,
+          maximumAge: 300000
+        }
+      );
+    });
+
+    async function findPlace(placeName) {
+      const url =
+        "https://geocoding-api.open-meteo.com/v1/search" +
+        `?name=${encodeURIComponent(placeName)}&count=1&language=en&format=json`;
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Place search failed.");
+
+      const data = await response.json();
+      if (!data.results?.length) {
+        throw new Error("Place not found. Try a nearby city name.");
+      }
+
+      return data.results[0];
+    }
+
+    async function getWeatherByCoordinates(lat, lon) {
+      $("weatherResult").classList.remove("hidden");
+      $("weatherResult").textContent = "Loading weather data...";
+
+      const url =
+        "https://api.open-meteo.com/v1/forecast" +
+        `?latitude=${lat}&longitude=${lon}` +
+        "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m" +
+        "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max" +
+        "&forecast_days=7&timezone=auto";
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Weather service unavailable.");
+
+        const data = await response.json();
+        currentWeather = data.current;
+
+        const daily = data.daily;
+
+        let forecastHTML = "";
+
+        for (let i = 0; i < daily.time.length; i++) {
+          forecastHTML += `
             <p>
-                Get weather-based crop guidance, crop suitability,
-                harvesting estimates and practical farming recommendations
-                for your selected location.
+              <strong>${escapeHTML(daily.time[i])}</strong>:
+              High ${daily.temperature_2m_max[i]}°C,
+              Low ${daily.temperature_2m_min[i]}°C,
+              Rain chance ${daily.precipitation_probability_max[i] ?? "N/A"}%
             </p>
-
-            <div class="hero-buttons">
-
-                <a href="#advisory" class="primary-button">
-                    🌱 Get Crop Advisory
-                </a>
-
-                <a href="#weather" class="secondary-button">
-                    ☁ Check Weather
-                </a>
-
-            </div>
-
-            <div class="hero-features">
-
-                <div class="hero-feature">
-                    <span>📍</span>
-                    <div>
-                        <strong>Local</strong>
-                        <small>Location based</small>
-                    </div>
-                </div>
-
-                <div class="hero-feature">
-                    <span>🌦️</span>
-                    <div>
-                        <strong>Live</strong>
-                        <small>Weather data</small>
-                    </div>
-                </div>
-
-                <div class="hero-feature">
-                    <span>🌾</span>
-                    <div>
-                        <strong>Smart</strong>
-                        <small>Crop guidance</small>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="hero-visual">
-
-            <div class="hero-card">
-
-                <div class="hero-card-top">
-
-                    <span>🌱</span>
-
-                    <div>
-                        <small>Smart Agriculture</small>
-                        <strong>Better Decisions</strong>
-                    </div>
-
-                </div>
-
-                <div class="plant-illustration">
-                    🌾
-                </div>
-
-                <div class="hero-weather-mini">
-
-                    <div>
-                        <span>🌤️</span>
-                        <strong>Weather</strong>
-                    </div>
-
-                    <div>
-                        <strong>7 Days</strong>
-                        <small>Forecast</small>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= LOCATION + SEARCH ================= -->
-
-<section class="control-section animate-section">
-
-    <div class="container">
-
-        <div class="section-heading">
-
-            <span class="section-label">LOCATION</span>
-
-            <h2>Set Your Farming Location</h2>
-
-            <p>
-                Search your city, village or use your current GPS location
-                for hyper-local weather information.
-            </p>
-
-        </div>
-
-
-        <div class="location-card">
-
-            <div class="location-search">
-
-                <div class="input-group">
-
-                    <label for="locationInput">
-                        📍 Location
-                    </label>
-
-                    <div class="search-box">
-
-                        <input
-                            type="text"
-                            id="locationInput"
-                            placeholder="Enter city, village or location..."
-                            autocomplete="off">
-
-                        <button
-                            id="searchBtn"
-                            class="search-button">
-                            Search
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    id="locationBtn"
-                    class="location-button">
-                    📍 Use Current Location
-                </button>
-
-            </div>
-
-
-            <div id="messageBox" class="message-box"></div>
-
-
-            <div class="selected-location">
-
-                <div class="location-icon">
-                    📍
-                </div>
-
-                <div>
-
-                    <span>Selected Location</span>
-
-                    <strong id="locationName">
-                        Location not selected
-                    </strong>
-
-                    <small id="coordinates">
-                        Latitude: -- | Longitude: --
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= WEATHER ================= -->
-
-<section class="weather-section animate-section" id="weather">
-
-    <div class="container">
-
-        <div class="section-heading">
-
-            <span class="section-label">WEATHER</span>
-
-            <h2>Current Weather</h2>
-
-            <p>
-                Weather information for your selected location.
-            </p>
-
-        </div>
-
-
-        <div class="current-weather-card">
-
-            <div class="weather-main">
-
-                <div class="weather-icon" id="weatherIcon">
-                    🌤️
-                </div>
-
-                <div>
-
-                    <span class="weather-label">
-                        CURRENT WEATHER
-                    </span>
-
-                    <div class="temperature">
-
-                        <span id="currentTemp">
-                            --
-                        </span>
-
-                        <sup>°C</sup>
-
-                    </div>
-
-                    <strong id="weatherDescription">
-                        Select a location
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="weather-stats">
-
-                <div class="weather-stat">
-
-                    <span>💧</span>
-
-                    <div>
-                        <small>Humidity</small>
-                        <strong id="humidity">--</strong>
-                    </div>
-
-                </div>
-
-
-                <div class="weather-stat">
-
-                    <span>🌧️</span>
-
-                    <div>
-                        <small>Rainfall</small>
-                        <strong id="rainfall">--</strong>
-                    </div>
-
-                </div>
-
-
-                <div class="weather-stat">
-
-                    <span>💨</span>
-
-                    <div>
-                        <small>Wind</small>
-                        <strong id="wind">--</strong>
-                    </div>
-
-                </div>
-
-
-                <div class="weather-stat">
-
-                    <span>🌡️</span>
-
-                    <div>
-                        <small>Feels Like</small>
-                        <strong id="feelsLike">--</strong>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- WEATHER ALERT -->
-
-        <div class="weather-alerts" id="weatherAlerts">
-
-        </div>
-
-
-        <!-- FORECAST -->
-
-        <div class="forecast-header">
-
-            <div>
-
-                <span class="section-label">
-                    FORECAST
-                </span>
-
-                <h3>7-Day Weather Forecast</h3>
-
-            </div>
-
-            <span id="lastUpdated">
-                Last updated: --
-            </span>
-
-        </div>
-
-
-        <div
-            class="forecast-container"
-            id="forecastContainer">
-
-            <div class="empty-forecast">
-
-                <span>☁️</span>
-
-                <p>
-                    Select a location to view the
-                    7-day forecast.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= ADVISORY ================= -->
-
-<section class="advisory-section animate-section" id="advisory">
-
-    <div class="container">
-
-        <div class="section-heading">
-
-            <span class="section-label">
-                AGRICULTURAL ADVISORY
-            </span>
-
-            <h2>Get Your Crop Advisory</h2>
-
-            <p>
-                Select a crop and sowing date to receive
-                weather-aware agricultural guidance.
-            </p>
-
-        </div>
-
-
-        <div class="advisory-form-card">
-
-            <div class="form-grid">
-
-                <!-- CROP -->
-
-                <div class="form-group">
-
-                    <label for="cropSelect">
-                        🌾 Select Crop
-                    </label>
-
-                    <select id="cropSelect">
-
-                        <option value="">
-                            Select a crop
-                        </option>
-
-                    </select>
-
-                    <small>
-                        Choose the crop you want to grow.
-                    </small>
-
-                </div>
-
-
-                <!-- DATE -->
-
-                <div class="form-group">
-
-                    <label for="sowingDate">
-                        📅 Sowing Date
-                    </label>
-
-                    <input
-                        type="date"
-                        id="sowingDate">
-
-                    <small>
-                        Used to estimate crop growth
-                        and harvesting date.
-                    </small>
-
-                </div>
-
-
-                <!-- BUTTON -->
-
-                <div class="form-group button-group">
-
-                    <button
-                        id="advisoryBtn"
-                        class="primary-button large-button">
-
-                        🌱 Generate Advisory
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================= ADVISORY RESULT ================= -->
-
-        <div
-            class="advisory-result"
-            id="advisorySection"
-            style="display:none;">
-
-
-            <!-- CROP HEADER -->
-
-            <div class="crop-header-card">
-
-                <div class="crop-title">
-
-                    <div class="crop-icon">
-                        🌾
-                    </div>
-
-                    <div>
-
-                        <span id="cropCategory">
-                            Crop
-                        </span>
-
-                        <h2 id="cropName">
-                            Crop Name
-                        </h2>
-
-                        <p id="cropHindi">
-                            --
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="crop-season">
-
-                    <span>
-                        Growing Season
-                    </span>
-
-                    <strong id="cropSeason">
-                        --
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- CROP DETAILS -->
-
-            <div class="crop-info-grid">
-
-                <div class="info-card">
-
-                    <span>🌱</span>
-
-                    <small>Soil</small>
-
-                    <strong id="cropSoil">
-                        --
-                    </strong>
-
-                </div>
-
-
-                <div class="info-card">
-
-                    <span>🌡️</span>
-
-                    <small>Temperature</small>
-
-                    <strong id="cropTemp">
-                        --
-                    </strong>
-
-                </div>
-
-
-                <div class="info-card">
-
-                    <span>💧</span>
-
-                    <small>Water Requirement</small>
-
-                    <strong id="cropWater">
-                        --
-                    </strong>
-
-                </div>
-
-
-                <div class="info-card">
-
-                    <span>☀️</span>
-
-                    <small>Sunlight</small>
-
-                    <strong id="cropSunlight">
-                        --
-                    </strong>
-
-                </div>
-
-
-                <div class="info-card">
-
-                    <span>📅</span>
-
-                    <small>Sowing Period</small>
-
-                    <strong id="cropSowing">
-                        --
-                    </strong>
-
-                </div>
-
-
-                <div class="info-card">
-
-                    <span>⏳</span>
-
-                    <small>Crop Duration</small>
-
-                    <strong id="cropDuration">
-                        --
-                    </strong>
-
-                </div>
-
-
-                <div class="info-card wide-info-card">
-
-                    <span>🌾</span>
-
-                    <small>Harvesting Period</small>
-
-                    <strong id="cropHarvest">
-                        --
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- HARVEST -->
-
-            <div class="harvest-card">
-
-                <div class="harvest-left">
-
-                    <div class="harvest-icon">
-                        🚜
-                    </div>
-
-                    <div>
-
-                        <span>
-                            ESTIMATED HARVEST
-                        </span>
-
-                        <h3 id="harvestDate">
-                            --
-                        </h3>
-
-                    </div>
-
-                </div>
-
-
-                <div class="harvest-countdown">
-
-                    <strong id="daysRemaining">
-                        --
-                    </strong>
-
-                    <span>
-                        days remaining
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- GROWTH STAGE -->
-
-            <div class="growth-status-card">
-
-                <div class="growth-status-header">
-
-                    <div>
-
-                        <span>
-                            CURRENT GROWTH STAGE
-                        </span>
-
-                        <h3 id="currentStage">
-                            --
-                        </h3>
-
-                    </div>
-
-                    <div class="growth-icon">
-                        🌱
-                    </div>
-
-                </div>
-
-                <div
-                    class="growth-stages"
-                    id="growthStages">
-
-                </div>
-
-            </div>
-
-
-            <!-- SUITABILITY -->
-
-            <div class="suitability-card">
-
-                <div class="suitability-header">
-
-                    <div>
-
-                        <span>
-                            WEATHER & CROP SUITABILITY
-                        </span>
-
-                        <h3 id="suitabilityStatus">
-                            --
-                        </h3>
-
-                    </div>
-
-                    <div
-                        class="suitability-score"
-                        id="suitabilityScore">
-                        --
-                    </div>
-
-                </div>
-
-
-                <div class="suitability-progress">
-
-                    <div
-                        class="suitability-bar"
-                        id="suitabilityBar">
-                    </div>
-
-                </div>
-
-
-                <p id="suitabilityMessage">
-                    Select a crop and generate an advisory.
-                </p>
-
-            </div>
-
-
-            <!-- ACTIONS -->
-
-            <div class="tasks-section">
-
-                <div class="tasks-header">
-
-                    <span class="section-label">
-                        FARMING ACTION PLAN
-                    </span>
-
-                    <h3>
-                        What You Should Do
-                    </h3>
-
-                    <p>
-                        Practical crop management activities
-                        for the selected crop.
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="crop-tasks"
-                    id="cropTasks">
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= CROP INFORMATION ================= -->
-
-<section class="crop-info-section animate-section" id="crop-info">
-
-    <div class="container">
-
-        <div class="section-heading">
-
-            <span class="section-label">
-                CROP KNOWLEDGE
-            </span>
-
-            <h2>Smart Crop Management</h2>
-
-            <p>
-                The advisory system considers crop information,
-                sowing date and weather conditions to provide
-                practical guidance.
-            </p>
-
-        </div>
-
-
-        <div class="knowledge-grid">
-
-            <div class="knowledge-card">
-
-                <div class="knowledge-icon">
-                    🌱
-                </div>
-
-                <h3>Crop Selection</h3>
-
-                <p>
-                    Select the crop you want to grow and
-                    view its growing requirements.
-                </p>
-
-            </div>
-
-
-            <div class="knowledge-card">
-
-                <div class="knowledge-icon">
-                    🌦️
-                </div>
-
-                <h3>Weather Analysis</h3>
-
-                <p>
-                    Current and forecast weather information
-                    is used for weather-aware advisory.
-                </p>
-
-            </div>
-
-
-            <div class="knowledge-card">
-
-                <div class="knowledge-icon">
-                    📅
-                </div>
-
-                <h3>Harvest Estimation</h3>
-
-                <p>
-                    Enter your sowing date to estimate
-                    crop duration and harvest timing.
-                </p>
-
-            </div>
-
-
-            <div class="knowledge-card">
-
-                <div class="knowledge-icon">
-                    🚜
-                </div>
-
-                <h3>Action Plan</h3>
-
-                <p>
-                    Get stage-based farming activities
-                    for crop management.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= DATA NOTE ================= -->
-
-<section class="data-note animate-section">
-
-    <div class="container">
-
-        <div class="data-note-card">
-
-            <div class="data-note-icon">
-                ℹ️
-            </div>
-
-            <div>
-
-                <h3>About the Data</h3>
-
-                <p>
-                    Weather information is obtained from the
-                    Open-Meteo weather API. Forecast values are
-                    estimates and can change as weather conditions
-                    change. Crop duration, suitability and harvest
-                    dates are approximate and may vary by variety,
-                    soil, farming practice and local conditions.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-</main>
-
-
-<!-- ================= FOOTER ================= -->
-
-<footer class="footer">
-
-    <div class="container footer-content">
-
-        <div class="footer-brand">
-
-            <div class="logo">
-
-                <span class="logo-icon">
-                    🌱
-                </span>
-
-                <span>
-                    <strong>Agri</strong>Guide
-                </span>
-
-            </div>
-
-            <p>
-                Hyper Local Agricultural Advisory System
-                for smarter farming decisions.
-            </p>
-
-        </div>
-
-
-        <div class="footer-links">
-
-            <a href="#home">
-                Home
-            </a>
-
-            <a href="#weather">
-                Weather
-            </a>
-
-            <a href="#advisory">
-                Advisory
-            </a>
-
-            <a href="#crop-info">
-                Crop Info
-            </a>
-
-        </div>
-
-    </div>
-
-
-    <div class="footer-bottom">
-
-        <div class="container">
-
-            <p>
-                © <span id="currentYear"></span>
-                AgriGuide. Agricultural advisory project.
-            </p>
-
-            <p>
-                Weather data: Open-Meteo
-            </p>
-
-        </div>
-
-    </div>
-
-</footer>
-
-
-<!-- ================= SCRIPTS ================= -->
-
-<script src="script.js"></script>
-<script src="app.js"></script>
+          `;
+        }
+
+        showResult("weatherResult", `
+          <h3>Current Weather</h3>
+          <p>Temperature: ${data.current.temperature_2m}°C</p>
+          <p>Feels like: ${data.current.apparent_temperature}°C</p>
+          <p>Humidity: ${data.current.relative_humidity_2m}%</p>
+          <p>Precipitation: ${data.current.precipitation} mm</p>
+          <p>Wind speed: ${data.current.wind_speed_10m} km/h</p>
+          <hr style="margin:12px 0">
+          <h3>7-Day Forecast</h3>
+          ${forecastHTML}
+          <p class="status">Source: Open-Meteo API. Forecast data is not a guarantee.</p>
+        `);
+      } catch (error) {
+        showResult(
+          "weatherResult",
+          escapeHTML(error.message || "Unable to load weather.")
+        );
+      }
+    }
+
+    $("weatherBtn").addEventListener("click", async () => {
+      const placeName = $("placeInput").value.trim();
+
+      if (!placeName) {
+        showResult("weatherResult", "Please enter a city or village name.");
+        return;
+      }
+
+      $("weatherResult").classList.remove("hidden");
+      $("weatherResult").textContent = "Finding location...";
+
+      try {
+        const place = await findPlace(placeName);
+
+        farmLatitude = place.latitude;
+        farmLongitude = place.longitude;
+        farmPlace = [
+          place.name,
+          place.admin1,
+          place.country
+        ].filter(Boolean).join(", ");
+
+        await getWeatherByCoordinates(
+          farmLatitude,
+          farmLongitude
+        );
+      } catch (error) {
+        showResult(
+          "weatherResult",
+          escapeHTML(error.message || "Unable to find this place.")
+        );
+      }
+    });
+
+    $("cropInfoBtn").addEventListener("click", () => {
+      const crop = cropData[$("cropSelect").value];
+
+      showResult("cropInfo", `
+        <h3>${escapeHTML(crop.name)}</h3>
+        <p><strong>Season:</strong> ${escapeHTML(crop.season)}</p>
+        <p><strong>Temperature:</strong> ${escapeHTML(crop.temp)}</p>
+        <p><strong>Soil:</strong> ${escapeHTML(crop.soil)}</p>
+        <p><strong>Water:</strong> ${escapeHTML(crop.water)}</p>
+        <p><strong>Growing duration:</strong> ${escapeHTML(crop.duration)}</p>
+        <p class="status">General guidance only. Actual needs depend on location and variety.</p>
+      `);
+    });
+
+    $("suitabilityBtn").addEventListener("click", () => {
+      const crop = cropData[$("cropSelect").value];
+
+      if (!currentWeather) {
+        showResult(
+          "suitabilityResult",
+          "First detect your location or load weather for your city. Then check crop requirements with local soil and season information."
+        );
+        return;
+      }
+
+      showResult("suitabilityResult", `
+        <h3>${escapeHTML(crop.name)}</h3>
+        <p>Current temperature: ${currentWeather.temperature_2m}°C</p>
+        <p>Preferred conditions: ${escapeHTML(crop.temp)}</p>
+        <p>
+          This is only a basic temperature comparison, not a validated
+          crop suitability model. Soil, season, rainfall and crop variety
+          must also be considered.
+        </p>
+      `);
+    });
+
+    $("recommendBtn").addEventListener("click", () => {
+      const crop = cropData[$("cropSelect").value];
+
+      showResult("recommendResult", `
+        <p>Selected crop: <strong>${escapeHTML(crop.name)}</strong></p>
+        <p>Season: ${escapeHTML(crop.season)}</p>
+        <p>Soil requirement: ${escapeHTML(crop.soil)}</p>
+        <p>Water requirement: ${escapeHTML(crop.water)}</p>
+        <p>
+          Before choosing this crop, check your local sowing calendar,
+          soil test, irrigation availability and local agriculture advice.
+        </p>
+      `);
+    });
+
+    $("riskBtn").addEventListener("click", () => {
+      if (!currentWeather) {
+        showResult(
+          "riskResult",
+          "Load current weather first to review temperature and precipitation conditions."
+        );
+        return;
+      }
+
+      const temp = currentWeather.temperature_2m;
+      const rain = currentWeather.precipitation;
+      let notes = [];
+
+      if (temp >= 40) {
+        notes.push("High temperature: review heat stress risk for your crop.");
+      } else if (temp <= 5) {
+        notes.push("Low temperature: check whether your crop is sensitive to cold.");
+      } else {
+        notes.push("Review temperature suitability for your crop and growth stage.");
+      }
+
+      if (rain >= 10) {
+        notes.push("Current precipitation is elevated; check drainage and local rain forecasts.");
+      } else {
+        notes.push("Check upcoming rainfall before irrigation or spraying.");
+      }
+
+      showResult("riskResult", `
+        <p>${notes.map(escapeHTML).join("<br>")}</p>
+        <p>
+          This is a simple weather warning, not an ML prediction
+          or a complete agricultural risk assessment.
+        </p>
+      `);
+    });
+
+    // Built-in rule-based chatbot: no API key required.
+    const chatButton = document.createElement("button");
+    chatButton.id = "chatBtn";
+    chatButton.textContent = "🌱 Ask AgriGuide";
+
+    const chatBox = document.createElement("div");
+    chatBox.id = "chatBox";
+
+    chatBox.innerHTML = `
+      <div id="chatHead">
+        🌱 AgriGuide Chatbot
+        <span id="chatClose">✖</span>
+      </div>
+      <div id="chatMessages"></div>
+      <form id="chatForm">
+        <input id="chatInput" placeholder="Ask about farming..." required>
+        <button type="submit">Send</button>
+      </form>
+    `;
+
+    document.body.append(chatButton, chatBox);
+
+    const chatMessages = $("chatMessages");
+    const chatInput = $("chatInput");
+
+    chatButton.onclick = () => {
+      chatBox.style.display =
+        chatBox.style.display === "flex" ? "none" : "flex";
+    };
+
+    $("chatClose").onclick = () => {
+      chatBox.style.display = "none";
+    };
+
+    function addChatMessage(text, type) {
+      const message = document.createElement("div");
+      message.className = "msg " + type;
+      message.textContent = text;
+      chatMessages.appendChild(message);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function chatbotReply(question) {
+      const q = question.toLowerCase();
+
+      if (/hello|hi\b|namaste|नमस्ते/.test(q)) {
+        return "Namaste! 🙏 Aap kis crop ki kheti kar rahe hain?";
+      }
+
+      if (/wheat|गेहूं|gehu/.test(q)) {
+        return "🌾 Wheat Rabi crop hai. Sowing time, irrigation aur fertilizer ki zarurat region, variety aur soil par depend karti hai.";
+      }
+
+      if (/rice|paddy|धान/.test(q)) {
+        return "🌾 Rice ko aam taur par warm conditions chahiye. Water requirement variety, soil aur crop stage par depend karti hai.";
+      }
+
+      if (/maize|मक्का/.test(q)) {
+        return "🌽 Maize ke liye well-drained soil aur flowering ke samay suitable moisture important hai.";
+      }
+
+      if (/water|irrigation|sinchai|पानी/.test(q)) {
+        return "💧 Soil moisture aur rainfall forecast check karein. Overwatering aur waterlogging se bachein.";
+      }
+
+      if (/weather|rain|मौसम|बारिश/.test(q)) {
+        return currentWeather
+          ? `🌦️ Latest loaded temperature: ${currentWeather.temperature_2m}°C. Full forecast ke liye Weather section dekhein.`
+          : "🌦️ Pehle Location ya Weather section mein apna weather load karein. Main apne aap live weather nahi jaanta.";
+      }
+
+      if (/fertilizer|खाद/.test(q)) {
+        return "🌱 Soil test aur crop growth stage ke according fertilizer use karein. Dose local agriculture expert se confirm karein.";
+      }
+
+      if (/disease|pest|कीट|रोग/.test(q)) {
+        return "🍃 Symptoms aur affected plant ki clear photo note karein. Sahi treatment se pehle KVK ya agriculture officer se diagnosis karayein.";
+      }
+
+      if (/thank|धन्यवाद/.test(q)) {
+        return "Aapka swagat hai! 😊";
+      }
+
+      return "🌱 Main basic crop, wheat, rice, maize, irrigation, fertilizer aur weather questions mein help kar sakta hoon. More specific question poochhein.";
+    }
+
+    $("chatForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const question = chatInput.value.trim();
+      if (!question) return;
+
+      addChatMessage(question, "user");
+      addChatMessage(chatbotReply(question), "bot");
+
+      chatInput.value = "";
+    });
+
+    addChatMessage(
+      "Namaste! 🙏 Main AgriGuide hoon. Crops, irrigation aur farming ke baare mein poochhein.",
+      "bot"
+    );
+  </script>
 
 </body>
 </html>
